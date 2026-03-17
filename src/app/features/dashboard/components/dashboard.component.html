@@ -1,0 +1,99 @@
+<div class="dashboard-container">
+  <header class="dashboard-header">
+    <div class="header-content">
+      <div class="logo">
+        <h1>Voldemort</h1>
+      </div>
+      <div class="user-menu">
+        <div class="user-avatar">
+          <span class="initials">{{ userInitials }}</span>
+        </div>
+        <div class="user-info">
+          <p class="user-name">{{ currentUser?.name || 'User' }}</p>
+          <p class="user-email">{{ currentUser?.email }}</p>
+        </div>
+        <button class="logout-btn" (click)="logout()" title="Logout">
+          🚪
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <main class="dashboard-main" *ngIf="!isLoading">
+    <div class="welcome-section">
+      <h2>{{ greeting }}, {{ currentUser?.name || 'User' }}!</h2>
+      <p>Welcome to your dashboard. You're successfully authenticated.</p>
+    </div>
+
+    <div class="stats-grid">
+      <div class="stat-card">
+        <div class="stat-icon">
+          👤
+        </div>
+        <div class="stat-content">
+          <h3>Profile</h3>
+          <p>Manage your account settings</p>
+        </div>
+      </div>
+
+      <div class="stat-card">
+        <div class="stat-icon">
+          🛡️
+        </div>
+        <div class="stat-content">
+          <h3>Security</h3>
+          <p>Update your security preferences</p>
+        </div>
+      </div>
+
+      <div class="stat-card">
+        <div class="stat-icon">
+          ⚙️
+        </div>
+        <div class="stat-content">
+          <h3>Settings</h3>
+          <p>Configure your application</p>
+        </div>
+      </div>
+
+      <div class="stat-card">
+        <div class="stat-icon">
+          📊
+        </div>
+        <div class="stat-content">
+          <h3>Activity</h3>
+          <p>View your recent activities</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="info-section">
+      <div class="info-card">
+        <h3>Account Information</h3>
+        <div class="info-grid">
+          <div class="info-item">
+            <label>User ID:</label>
+            <span>{{ currentUser?.id || 'N/A' }}</span>
+          </div>
+          <div class="info-item">
+            <label>Email:</label>
+            <span>{{ currentUser?.email }}</span>
+          </div>
+          <div class="info-item">
+            <label>Member Since:</label>
+            <span>{{ formattedJoinDate }}</span>
+          </div>
+          <div class="info-item">
+            <label>Email Verified:</label>
+            <span>{{ currentUser?.isEmailVerified ? 'Yes' : 'No' }}</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <div class="loading-spinner" *ngIf="isLoading">
+    ⏳
+    <p>Loading dashboard...</p>
+  </div>
+</div>
