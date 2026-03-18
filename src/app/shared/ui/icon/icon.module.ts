@@ -15,6 +15,7 @@ import {
   faRightFromBracket,
   faHome,
   faInfoCircle,
+  faList,
 } from '@fortawesome/free-solid-svg-icons';
 
 @NgModule({
@@ -37,6 +38,7 @@ export class IconModule {
     faRightFromBracket,
     faHome,
     faInfoCircle,
+    faList,
   ];
 
   constructor() {

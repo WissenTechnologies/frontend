@@ -1,6 +1,6 @@
 export type { AuthUser, IAuthFacade } from './models';
 export { AUTH_FACADE } from './tokens';
-export { authGuard } from './guards';
+export { authGuard, adminGuard, noAuthGuard } from './guards';
 export { authInterceptor } from './interceptors';
 
 // Stores

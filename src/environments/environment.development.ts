@@ -7,7 +7,7 @@ export const environment = {
 
   // Replace this with your server API URL
   // We assigned it to empty string for the Fake API
-  apiUrl: '',
+  apiUrl: 'http://localhost:5000',
 
   settings: {
     auth: {

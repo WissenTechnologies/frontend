@@ -3,7 +3,7 @@ import { Store } from '@ngxs/store';
 
 import { IAuthFacade } from '../../models';
 
-import { FetchAuthUser, Login, Logout } from './auth.actions';
+import { FetchAuthUser, Login, Logout, Register, ResetPassword, VerifyRegistrationOtp } from './auth.actions';
 import { AuthSelectors } from './auth.selectors';
 
 @Injectable()
@@ -25,5 +25,17 @@ export class NgxsAuthFacade implements IAuthFacade {
 
   getAuthUser() {
     this.store.dispatch(new FetchAuthUser());
+  }
+
+  register(username: string, email: string, password: string) {
+    this.store.dispatch(new Register(username, email, password));
+  }
+
+  verifyRegistrationOtp(email: string, otp: string) {
+    this.store.dispatch(new VerifyRegistrationOtp(email, otp));
+  }
+
+  resetPassword(email: string) {
+    this.store.dispatch(new ResetPassword(email));
   }
 }

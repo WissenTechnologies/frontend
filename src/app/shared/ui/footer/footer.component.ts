@@ -23,24 +23,9 @@ export class FooterComponent {
   readonly now = new Date();
   readonly personalLinks: PersonalLink[] = [
     {
-      label: 'GitHub',
-      href: 'https://github.com/nikosanif',
-      icon: ['fab', 'github'],
-    },
-    {
-      label: 'Medium',
-      href: 'https://nikosanif.medium.com/',
-      icon: ['fab', 'medium-m'],
-    },
-    {
-      label: 'LinkedIn',
-      href: 'https://www.linkedin.com/in/nikosanifantis/',
-      icon: ['fab', 'linkedin-in'],
-    },
-    {
-      label: 'X',
-      href: 'https://x.com/nikosanif',
-      icon: ['fab', 'x-twitter'],
+      label: 'Voldemort Trade',
+      href: 'https://voldemort-trade.com',
+      icon: 'list',
     },
   ];
 }

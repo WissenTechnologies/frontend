@@ -1,0 +1,67 @@
+<div class="chart-container">
+  <!-- Compact Controls -->
+  <div class="chart-controls">
+    <div class="control-group">
+      <mat-form-field appearance="outline" class="compact-field">
+        <mat-label>Type</mat-label>
+        <mat-select [(value)]="chartType" (selectionChange)="onChartTypeChange()">
+          @for (type of chartTypes; track type.value) {
+            <mat-option [value]="type.value">{{ type.label }}</mat-option>
+          }
+        </mat-select>
+      </mat-form-field>
+
+      <mat-form-field appearance="outline" class="compact-field time-range-field">
+        <mat-label>Time Range</mat-label>
+        <mat-select [(value)]="selectedTimeRange" (selectionChange)="onTimeRangeChange()">
+          @for (range of timeRangeOptions; track range.value) {
+            <mat-option [value]="range.days">{{ range.label }}</mat-option>
+          }
+        </mat-select>
+      </mat-form-field>
+    </div>
+
+    <div class="compact-controls">
+      <button mat-icon-button 
+              (click)="toggleGrid()" 
+              [class.active]="showGrid"
+              matTooltip="Toggle Grid"
+              matTooltipPosition="above">
+        <mat-icon>grid_on</mat-icon>
+      </button>
+      
+      <button mat-icon-button 
+              (click)="changeChartColor('#4caf50')" 
+              matTooltip="Green"
+              class="color-btn green">
+      </button>
+      
+      <button mat-icon-button 
+              (click)="changeChartColor('#2196f3')" 
+              matTooltip="Blue"
+              class="color-btn blue">
+      </button>
+      
+      <button mat-icon-button 
+              (click)="changeChartColor('#ff9800')" 
+              matTooltip="Orange"
+              class="color-btn orange">
+      </button>
+      
+      <button mat-icon-button 
+              (click)="changeChartColor('#9c27b0')" 
+              matTooltip="Purple"
+              class="color-btn purple">
+      </button>
+    </div>
+  </div>
+
+  <!-- Large Chart Area -->
+  <div class="chart-wrapper">
+    <canvas baseChart
+            [data]="chartData"
+            [options]="chartOptions"
+            [type]="chartType">
+    </canvas>
+  </div>
+</div>

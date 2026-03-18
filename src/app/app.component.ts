@@ -5,7 +5,7 @@ import { NavigationEnd, Router, RouterOutlet } from '@angular/router';
 import { filter } from 'rxjs';
 
 import { AUTH_FACADE } from './auth';
-import { ConfigService, GoogleAnalyticsService } from './core/services';
+import { ConfigService, GoogleAnalyticsService, ThemeService } from './core/services';
 import { FooterComponent } from './shared/ui/footer';
 import { HeaderComponent } from './shared/ui/header';
 
@@ -30,11 +30,13 @@ export class AppComponent implements OnInit {
   private readonly authFacade = inject(AUTH_FACADE);
   private readonly configService = inject(ConfigService);
   private readonly googleAnalyticsService = inject(GoogleAnalyticsService);
+  private readonly themeService = inject(ThemeService);
 
   readonly version = this.configService.getVersion();
   readonly authUser$ = this.authFacade.authUser$;
 
   ngOnInit() {
+    this.themeService.init();
     if (this.configService.isProd()) {
       this.setupGoogleAnalytics();
     }

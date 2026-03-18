@@ -1,5 +1,5 @@
 import { AsyncPipe } from '@angular/common';
-import { Component, inject } from '@angular/core';
+import { Component, inject, output } from '@angular/core';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
@@ -23,6 +23,7 @@ import { AUTH_FACADE } from '../tokens';
 })
 export class LoginComponent {
   private readonly authFacade = inject(AUTH_FACADE);
+  readonly switch = output<'login' | 'register' | 'reset-password'>();
 
   readonly loginForm = new FormGroup({
     username: new FormControl('', {

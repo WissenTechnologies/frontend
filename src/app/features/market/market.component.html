@@ -1,0 +1,185 @@
+<div class="market-container" [class.admin-mode]="(authUser$ | async)?.role === 'admin'">
+  <div class="stock-list">
+    <mat-card class="stock-list-card">
+      <mat-card-header>
+        <mat-card-title>Stocks</mat-card-title>
+      </mat-card-header>
+      <mat-card-content>
+        <div class="stocks-compact-list">
+          @for (stock of ((stocks$ | async) || []); track stock.symbol) {
+            <button
+              type="button"
+              class="stock-row"
+              (click)="selectStock(stock)"
+              [class.selected]="selectedStock?.symbol === stock.symbol"
+            >
+              <div class="left">
+                @if (stock.logoUrl) {
+                  <img
+                    class="logo"
+                    [src]="stock.logoUrl"
+                    alt=""
+                    (error)="$event.target.style.display='none'"
+                  />
+                }
+
+                <div class="meta">
+                  <div class="symbol" [class.positive]="stock.changePercent > 0" [class.negative]="stock.changePercent < 0">
+                    {{ stock.symbol }}
+                  </div>
+                  <div class="name">{{ stock.name }}</div>
+                </div>
+              </div>
+
+              <div class="right">
+                <div class="price">₹{{ stock.price.toFixed(2) }}</div>
+                <div class="change" [class.positive]="stock.changePercent > 0" [class.negative]="stock.changePercent < 0">
+                  @if (stock.changePercent > 0) {
+                    <span class="arrow">▲</span>
+                  } @else if (stock.changePercent < 0) {
+                    <span class="arrow">▼</span>
+                  }
+                  <span>{{ stock.changePercent > 0 ? '+' : '' }}{{ stock.changePercent.toFixed(2) }}%</span>
+                </div>
+              </div>
+            </button>
+          }
+        </div>
+      </mat-card-content>
+    </mat-card>
+  </div>
+
+  <div class="stock-details">
+    @if (selectedStock) {
+      <mat-card class="stock-detail-card">
+        <mat-card-header class="stock-detail-header">
+          <mat-card-title>{{ selectedStock.name }} ({{ selectedStock.symbol }})</mat-card-title>
+          @if (selectedStock.logoUrl) {
+            <img [src]="selectedStock.logoUrl" alt="{{ selectedStock.name }} logo" class="company-logo-large">
+          }
+        </mat-card-header>
+        <mat-card-content>
+          <div class="price-info">
+            <div class="current-price">₹{{ selectedStock.price.toFixed(2) }}</div>
+            <div class="price-change" 
+                 [class.positive]="selectedStock.change > 0" 
+                 [class.negative]="selectedStock.change < 0">
+              {{ selectedStock.change > 0 ? '+' : '' }}₹{{ selectedStock.change.toFixed(2) }} 
+              ({{ selectedStock.changePercent > 0 ? '+' : '' }}{{ selectedStock.changePercent.toFixed(2) }}%)
+            </div>
+          </div>
+          
+          <div class="stock-stats">
+            <div class="stat">
+              <span class="label">Day High:</span>
+              <span class="value">₹{{ selectedStock.dayHigh.toFixed(2) }}</span>
+            </div>
+            <div class="stat">
+              <span class="label">Day Low:</span>
+              <span class="value">₹{{ selectedStock.dayLow.toFixed(2) }}</span>
+            </div>
+            <div class="stat">
+              <span class="label">Volume:</span>
+              <span class="value">{{ selectedStock.volume }}</span>
+            </div>
+            <div class="stat">
+              <span class="label">Market Cap:</span>
+              <span class="value">{{ selectedStock.marketCap }}</span>
+            </div>
+          </div>
+
+          <div class="chart-container">
+            <app-trading-chart 
+              [priceData]="selectedStock.history" 
+              [stockSymbol]="selectedStock.symbol">
+            </app-trading-chart>
+          </div>
+        </mat-card-content>
+      </mat-card>
+    } @else {
+      <mat-card class="stock-detail-card">
+        <mat-card-content>
+          <div class="no-selection">
+            <mat-icon>bar_chart</mat-icon>
+            <p>Select a stock to view details</p>
+          </div>
+        </mat-card-content>
+      </mat-card>
+    }
+  </div>
+
+  @if (authUser$ | async; as user) {
+    @if (canAccessTrading(user)) {
+      <div class="execution-terminal">
+        <mat-card class="terminal-card">
+          <mat-card-header>
+            <mat-card-title>Execution Terminal</mat-card-title>
+          </mat-card-header>
+          <mat-card-content>
+            <div class="trade-actions">
+              <button mat-button 
+                      class="buy-button" 
+                      [class.active]="buyOrder"
+                      (click)="buyOrder = true">BUY</button>
+              <button mat-button 
+                      class="sell-button"
+                      [class.active]="!buyOrder" 
+                      (click)="buyOrder = false">SELL</button>
+            </div>
+
+            <mat-form-field appearance="outline" class="full-width">
+              <mat-label>Portfolio</mat-label>
+              <mat-select [(value)]="selectedPortfolioId">
+                @for (p of portfolios; track p.id) {
+                  <mat-option [value]="p.id">{{ p.name }}</mat-option>
+                }
+              </mat-select>
+            </mat-form-field>
+
+            <mat-form-field appearance="outline" class="full-width">
+              <mat-label>Order Type</mat-label>
+              <mat-select [(value)]="orderType">
+                <mat-option value="market">Market</mat-option>
+                <mat-option value="limit">Limit</mat-option>
+              </mat-select>
+            </mat-form-field>
+
+            <mat-form-field appearance="outline" class="full-width">
+              <mat-label>Quantity</mat-label>
+              <input matInput type="number" [(ngModel)]="quantity" min="1">
+            </mat-form-field>
+
+            @if (orderType === 'limit') {
+              <mat-form-field appearance="outline" class="full-width">
+                <mat-label>Limit Price</mat-label>
+                <input matInput type="number" [(ngModel)]="limitPrice" min="0.01" step="0.01" placeholder="Enter limit price">
+              </mat-form-field>
+            }
+
+            @if (selectedStock) {
+              <div class="order-summary">
+                <div class="summary-row">
+                  <span>Est. Total:</span>
+                  <span>₹{{ estimatedTotal.toFixed(2) }}</span>
+                </div>
+                <div class="summary-row">
+                  <span>Price / Share:</span>
+                  <span>₹{{ selectedStock.price.toFixed(2) }}</span>
+                </div>
+              </div>
+
+              <button mat-raised-button 
+                      class="execute-button"
+                      [class.buy-button]="buyOrder"
+                      [class.sell-button]="!buyOrder"
+                      (click)="onBuySell()"
+                      [disabled]="quantity <= 0">
+                {{ buyOrder ? 'BUY' : 'SELL' }} {{ selectedStock.symbol }}
+              </button>
+            }
+          </mat-card-content>
+        </mat-card>
+      </div>
+    }
+  }
+</div>

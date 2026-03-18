@@ -7,7 +7,7 @@ import { TokenStorageService } from '../../../core/services';
 import { AuthService } from '../../auth.service';
 import { AuthStateModel, TokenStatus } from '../../models';
 
-import { Login, Logout, RefreshToken, FetchAuthUser } from './auth.actions';
+import { Login, Logout, RefreshToken, FetchAuthUser, Register, ResetPassword, VerifyRegistrationOtp } from './auth.actions';
 
 const AUTH_FEATURE_KEY = 'auth';
 
@@ -50,8 +50,8 @@ export class AuthState {
           refreshTokenStatus: TokenStatus.VALID,
         });
 
-        // Redirect to return url or home
-        const returnUrl = this.activatedRoute.snapshot.queryParams['returnUrl'] || '/';
+        // Redirect to market (dashboard)
+        const returnUrl = this.activatedRoute.snapshot.queryParams['returnUrl'] || '/market';
         this.router.navigateByUrl(returnUrl);
 
         return ctx.dispatch(new FetchAuthUser());
@@ -88,6 +88,81 @@ export class AuthState {
       tap(user => ctx.patchState({ user })),
       catchError(error => {
         ctx.setState({ ...initialState });
+        return throwError(() => error);
+      })
+    );
+  }
+
+  @Action(Register)
+  register(ctx: StateContext<AuthStateModel>, action: Register) {
+    ctx.patchState({
+      isLoadingLogin: true,
+      hasLoginError: false,
+    });
+
+    return this.authService.register(
+      action.username, 
+      action.email, 
+      action.password
+    ).pipe(
+      tap(() => {
+        ctx.patchState({ isLoadingLogin: false });
+        // Handled by component: navigate to OTP verification or show message
+      }),
+      catchError(error => {
+        ctx.patchState({
+          isLoadingLogin: false,
+          hasLoginError: true,
+        });
+        return throwError(() => error);
+      })
+    );
+  }
+
+  @Action(VerifyRegistrationOtp)
+  verifyRegistrationOtp(ctx: StateContext<AuthStateModel>, action: VerifyRegistrationOtp) {
+    ctx.patchState({
+      isLoadingLogin: true,
+      hasLoginError: false,
+    });
+
+    return this.authService.verifyRegistrationOtp(action.email, action.otp).pipe(
+      switchMap(data => {
+        this.tokenStorageService.saveTokens(data.access_token, data.refresh_token);
+
+        ctx.patchState({
+          isLoggedIn: true,
+          isLoadingLogin: false,
+          accessTokenStatus: TokenStatus.VALID,
+          refreshTokenStatus: TokenStatus.VALID,
+        });
+
+        this.router.navigateByUrl('/market');
+
+        return ctx.dispatch(new FetchAuthUser());
+      }),
+      catchError(error => {
+        ctx.patchState({
+          isLoadingLogin: false,
+          hasLoginError: true,
+        });
+        return throwError(() => error);
+      })
+    );
+  }
+
+  @Action(ResetPassword)
+  resetPassword(ctx: StateContext<AuthStateModel>, action: ResetPassword) {
+    return this.authService.resetPassword(action.email).pipe(
+      tap(() => {
+        // Password reset email sent successfully
+        // The component will handle the success message
+      }),
+      catchError(error => {
+        ctx.patchState({
+          hasLoginError: true,
+        });
+
         return throwError(() => error);
       })
     );

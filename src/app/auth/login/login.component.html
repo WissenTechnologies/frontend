@@ -1,26 +1,19 @@
 @if (vm$ | async; as vm) {
-  <div class="flex justify-center">
+  <div class="flex justify-center" style="color: var(--text);">
     <div class="mt-10 w-10/12 md:w-1/2">
       <h1>
         <span class="text-primary">Login</span>
         your account
       </h1>
 
-      <mat-card>
+      <mat-card style="background: var(--surface); border: 1px solid var(--border);">
         <mat-card-content>
           <form
             [formGroup]="loginForm"
             (ngSubmit)="loginForm.valid && submit()"
-            class="grid gap-2 bg-white"
+            class="grid gap-2"
+            style="background: var(--surface);"
           >
-            <div class="alert alert--info">
-              Use account
-              <b>admin</b>
-              and password
-              <b>demo</b>
-              to continue. 🚀
-            </div>
-
             @if (vm.showLoginError) {
               <div class="alert alert--error">Ooops! Invalid username or password.</div>
             }
@@ -35,7 +28,18 @@
               <input matInput type="password" formControlName="password" />
             </mat-form-field>
 
-            <button mat-flat-button [disabled]="vm.isLoading" type="submit">Login</button>
+            <button mat-flat-button [disabled]="vm.isLoading" type="submit" style="font-family: sans-serif-condensed, 'Roboto Condensed', 'Helvetica Neue Condensed', 'Arial Narrow', sans-serif;">Login</button>
+            
+            <div class="mt-4 text-center space-y-2" style="color: var(--text-muted);">
+              <div>
+                <span>Don't have an account? </span>
+                <button type="button" (click)="switch.emit('register')" style="background:none;border:none;color:var(--text-muted);font-family: sans-serif-condensed, 'Roboto Condensed', 'Helvetica Neue Condensed', 'Arial Narrow', sans-serif;cursor:pointer;text-decoration:underline;">Register</button>
+              </div>
+              <div>
+                <span>Forgot your password? </span>
+                <button type="button" (click)="switch.emit('reset-password')" style="background:none;border:none;color:var(--text-muted);font-family: sans-serif-condensed, 'Roboto Condensed', 'Helvetica Neue Condensed', 'Arial Narrow', sans-serif;cursor:pointer;text-decoration:underline;">Reset Password</button>
+              </div>
+            </div>
           </form>
         </mat-card-content>
       </mat-card>

@@ -26,4 +26,20 @@ export class NgrxAuthFacade implements IAuthFacade {
   getAuthUser() {
     this.store.dispatch(AuthUserActions.request());
   }
+
+  register(username: string, email: string, password: string) {
+    // NgRx implementation - would need to create actions for this
+    console.log('Register method called in NgRx facade (not implemented)');
+  }
+
+  verifyRegistrationOtp(email: string, otp: string) {
+    // NgRx implementation - would need to create actions for this
+    console.log('Verify OTP method called in NgRx facade (not implemented)');
+  }
+
+  resetPassword(email: string) {
+    // NgRx implementation - would need to create actions for this
+    // For now, dispatch a placeholder action or implement the actual NgRx flow
+    console.log('Reset password method called in NgRx facade (not implemented)');
+  }
 }

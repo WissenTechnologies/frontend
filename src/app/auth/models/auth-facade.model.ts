@@ -11,4 +11,7 @@ export interface IAuthFacade {
   login(username: string, password: string): void;
   logout(): void;
   getAuthUser(): void;
+  register(username: string, email: string, password: string): void;
+  verifyRegistrationOtp(email: string, otp: string): void;
+  resetPassword(email: string): void;
 }

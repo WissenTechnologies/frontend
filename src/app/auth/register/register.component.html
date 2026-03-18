@@ -1,0 +1,87 @@
+@if (vm$ | async; as vm) {
+  <div class="flex justify-center" style="color: var(--text);">
+    <div class="mt-10 w-10/12 md:w-1/2">
+      <h1>
+        <span class="text-primary">Register</span>
+        your account
+      </h1>
+
+      <mat-card style="background: var(--surface); border: 1px solid var(--border);">
+        <mat-card-content>
+          <form
+            [formGroup]="registerForm"
+            (ngSubmit)="submit()"
+            class="grid gap-2"
+            style="background: var(--surface);"
+          >
+            @if (vm.showLoginError) {
+              <div class="alert alert--error">Operation failed. Please check your details.</div>
+            }
+
+            @if (!isOtpStep) {
+              <mat-form-field>
+                <mat-label>Username</mat-label>
+                <input matInput type="text" formControlName="username" />
+                @if (registerForm.get('username')?.invalid && registerForm.get('username')?.touched) {
+                  <mat-error>Username is required</mat-error>
+                }
+              </mat-form-field>
+
+              <mat-form-field>
+                <mat-label>Email</mat-label>
+                <input matInput type="email" formControlName="email" />
+                @if (registerForm.get('email')?.invalid && registerForm.get('email')?.touched) {
+                  <mat-error>Please enter a valid email</mat-error>
+                }
+              </mat-form-field>
+
+              <mat-form-field>
+                <mat-label>Password</mat-label>
+                <input matInput type="password" formControlName="password" />
+                @if (registerForm.get('password')?.invalid && registerForm.get('password')?.touched) {
+                  <mat-error>Password must be at least 6 characters</mat-error>
+                }
+              </mat-form-field>
+
+              <mat-form-field>
+                <mat-label>Confirm Password</mat-label>
+                <input matInput type="password" formControlName="confirmPassword" />
+                @if (registerForm.get('confirmPassword')?.invalid && registerForm.get('confirmPassword')?.touched) {
+                  <mat-error>Please confirm your password</mat-error>
+                }
+              </mat-form-field>
+
+              <button mat-flat-button [disabled]="vm.isLoading" type="submit" style="font-family: sans-serif-condensed, 'Roboto Condensed', 'Helvetica Neue Condensed', 'Arial Narrow', sans-serif;">Send Verification Code</button>
+            } @else {
+              <div class="otp-container p-6 rounded-lg shadow-inner mb-6 border border-gray-200" style="background: var(--surface-2); font-family: sans-serif-condensed, 'Roboto Condensed', 'Helvetica Neue Condensed', 'Arial Narrow', sans-serif; color: var(--text);">
+                <h3 class="text-xl font-bold mb-4 text-center tracking-tight uppercase">Enter Verification Code</h3>
+                <div class="otp-instruction mb-6 text-center font-medium text-sm" style="color: var(--text-muted);">
+                  We've sent a 6-digit code to <br>
+                  <strong class="text-lg">{{registerForm.get('email')?.value}}</strong>.
+                </div>
+
+                <mat-form-field class="w-full">
+                  <mat-label style="color: var(--text-muted);">Verification Code (OTP)</mat-label>
+                  <input matInput type="text" formControlName="otp" placeholder="000000" class="text-center font-bold text-2xl tracking-[0.5em]" style="color: var(--text);" />
+                  @if (registerForm.get('otp')?.invalid && registerForm.get('otp')?.touched) {
+                    <mat-error>Valid 6-digit OTP is required</mat-error>
+                  }
+                </mat-form-field>
+
+                <div class="flex flex-col gap-3 mt-4">
+                  <button mat-flat-button color="primary" class="h-12 text-lg font-bold" [disabled]="vm.isLoading" type="submit" style="font-family: sans-serif-condensed, 'Roboto Condensed', 'Helvetica Neue Condensed', 'Arial Narrow', sans-serif;">Verify & Register</button>
+                  <button mat-button type="button" (click)="isOtpStep = false" style="background:none;border:none;color:var(--text-muted);font-family: sans-serif-condensed, 'Roboto Condensed', 'Helvetica Neue Condensed', 'Arial Narrow', sans-serif;cursor:pointer;text-decoration:underline;">Back to Details</button>
+                </div>
+              </div>
+            }
+            
+            <div class="mt-4 text-center" style="color: var(--text-muted);">
+              <span>Already have an account? </span>
+              <button type="button" (click)="goToLogin()" style="background:none;border:none;color:var(--text-muted);font-family: sans-serif-condensed, 'Roboto Condensed', 'Helvetica Neue Condensed', 'Arial Narrow', sans-serif;cursor:pointer;text-decoration:underline;">Login</button>
+            </div>
+          </form>
+        </mat-card-content>
+      </mat-card>
+    </div>
+  </div>
+}

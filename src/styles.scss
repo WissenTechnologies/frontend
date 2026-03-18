@@ -2,40 +2,65 @@
 
 @use './theme';
 
-// Configure tailwindcss
+// Configure tailwindcss for Voldemort Trade App
 @theme {
-  --color-primary: #7d01fa;
-  --color-secondary: #e8e1f7;
-  --color-accent: #0dbfa9;
+  --color-primary: #3f51b5;
+  --color-secondary: #2a2a2a;
+  --color-accent: #00ff00;
 }
 
 :root {
-  --color-primary: #7d01fa;
-  --color-secondary: #e8e1f7;
-  --color-accent: #0dbfa9;
+  --color-primary: #3f51b5;
+  --color-secondary: #2a2a2a;
+  --color-accent: #00ff00;
+
+  --bg: #1a1a1a;
+  --surface: #0a0a0a;
+  --surface-2: #111111;
+  --border: #1a1a1a;
+  --text: #ffffff;
+  --text-muted: rgba(255, 255, 255, 0.7);
+}
+
+body.theme-dark {
+  --bg: #1a1a1a;
+  --surface: #0a0a0a;
+  --surface-2: #111111;
+  --border: #1a1a1a;
+  --text: #ffffff;
+  --text-muted: rgba(255, 255, 255, 0.7);
+}
+
+body.theme-light {
+  --bg: #f6f7fb;
+  --surface: #ffffff;
+  --surface-2: #f0f1f5;
+  --border: #e5e7eb;
+  --text: #0b0b0b;
+  --text-muted: rgba(0, 0, 0, 0.65);
 }
 
 html,
 body {
   height: 100%;
+  background-color: var(--bg);
+  color: var(--text);
 }
+
 body {
   margin: 0;
-  font-family:
-    ui-sans-serif,
-    system-ui,
-    -apple-system,
-    BlinkMacSystemFont,
-    Segoe UI,
-    Roboto,
-    Helvetica Neue,
-    Arial,
-    Noto Sans,
-    sans-serif,
-    Apple Color Emoji,
-    Segoe UI Emoji,
-    Segoe UI Symbol,
-    Noto Color Emoji;
+  font-family: sans-serif-condensed, 'Roboto Condensed', 'Helvetica Neue Condensed', 'Arial Narrow', sans-serif;
+}
+
+// Theme-aware text utility overrides (many templates use Tailwind-like classes)
+.text-white { color: var(--text) !important; }
+.text-black { color: var(--text) !important; }
+
+.text-gray-400,
+.text-gray-500,
+.text-gray-600,
+.text-gray-700 {
+  color: var(--text-muted) !important;
 }
 
 // Section styles
@@ -69,4 +94,115 @@ section {
     background-color: oklch(97.3% 0.071 103.193);
     color: oklch(47.6% 0.114 61.907);
   }
+}
+// Theme-aware dialogs (dark/light)
+.mat-mdc-dialog-container {
+  border-radius: 2px !important;
+  background: var(--surface) !important;
+  border: 1px solid var(--border) !important;
+  color: var(--text) !important;
+  font-family: sans-serif-condensed, 'Roboto Condensed', 'Helvetica Neue Condensed', 'Arial Narrow', sans-serif !important;
+  
+  .mdc-dialog__surface {
+    background: transparent !important;
+  }
+}
+
+.mat-mdc-dialog-title {
+  color: var(--text) !important;
+  font-weight: 900 !important;
+  letter-spacing: 2px !important;
+  border-bottom: 2px solid var(--border);
+  padding-bottom: 20px !important;
+  margin-bottom: 20px !important;
+  font-family: sans-serif-condensed, 'Roboto Condensed', 'Helvetica Neue Condensed', 'Arial Narrow', sans-serif !important;
+}
+
+.mat-mdc-dialog-content {
+  color: var(--text) !important;
+  font-family: sans-serif-condensed, 'Roboto Condensed', 'Helvetica Neue Condensed', 'Arial Narrow', sans-serif !important;
+}
+
+.mat-mdc-button, .mat-mdc-raised-button, .mat-mdc-unelevated-button, .mat-mdc-outlined-button {
+  border-radius: 2px !important;
+  font-weight: 800 !important;
+  letter-spacing: 1px !important;
+  font-family: sans-serif-condensed, 'Roboto Condensed', 'Helvetica Neue Condensed', 'Arial Narrow', sans-serif !important;
+}
+
+.mat-mdc-form-field {
+  .mat-mdc-text-field-wrapper {
+    background-color: var(--surface-2) !important;
+    border: 1px solid var(--border) !important;
+    border-radius: 2px !important;
+  }
+  .mat-mdc-input-element {
+    color: var(--text) !important;
+    font-weight: bold !important;
+    font-family: sans-serif-condensed, 'Roboto Condensed', 'Helvetica Neue Condensed', 'Arial Narrow', sans-serif !important;
+  }
+  .mat-mdc-form-field-label {
+    color: var(--text-muted) !important;
+    font-family: sans-serif-condensed, 'Roboto Condensed', 'Helvetica Neue Condensed', 'Arial Narrow', sans-serif !important;
+  }
+}
+
+// Dialog backdrop/overlay theme-aware with blur and darkening for focus
+.mat-mdc-dialog-container .mdc-dialog__scrim {
+  background-color: rgba(0, 0, 0, 0.7) !important;
+  backdrop-filter: blur(8px) !important;
+  -webkit-backdrop-filter: blur(8px) !important;
+}
+
+body.theme-light .mat-mdc-dialog-container .mdc-dialog__scrim {
+  background-color: rgba(0, 0, 0, 0.5) !important;
+  backdrop-filter: blur(8px) !important;
+  -webkit-backdrop-filter: blur(8px) !important;
+}
+
+// Mat-select dropdowns in dialogs theme-aware
+.mat-mdc-select-panel {
+  background: var(--surface) !important;
+  border: 1px solid var(--border) !important;
+  color: var(--text) !important;
+  font-family: sans-serif-condensed, 'Roboto Condensed', 'Helvetica Neue Condensed', 'Arial Narrow', sans-serif !important;
+  .mat-mdc-option {
+    color: var(--text) !important;
+    font-family: sans-serif-condensed, 'Roboto Condensed', 'Helvetica Neue Condensed', 'Arial Narrow', sans-serif !important;
+  }
+  .mat-mdc-option:hover {
+    background: color-mix(in srgb, var(--text) 8%, transparent) !important;
+  }
+  .mat-mdc-option.mat-mdc-selected {
+    background: color-mix(in srgb, var(--text) 12%, transparent) !important;
+  }
+}
+
+// Ensure dark text on light backgrounds (like auth forms)
+.bg-white {
+  .mat-mdc-input-element {
+    color: #000 !important;
+  }
+  .mat-mdc-form-field-label {
+    color: rgba(0, 0, 0, 0.6) !important;
+  }
+  input::placeholder {
+    color: rgba(0, 0, 0, 0.4) !important;
+  }
+}
+
+// Custom Scrollbar for Premium Feel
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: var(--surface);
+}
+::-webkit-scrollbar-thumb {
+  background: color-mix(in srgb, var(--text) 25%, transparent);
+  border-radius: 10px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: color-mix(in srgb, var(--text) 35%, transparent);
 }

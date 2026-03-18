@@ -1,68 +1,48 @@
 <header>
   <div class="flex items-center">
     <!-- BEGIN: Title -->
-    <a routerLink="/home" class="flex items-center">
-      <img src="/assets/logo.svg" class="logo-icon" alt="Angular Authentication Logo" />
-      <span class="text-xl font-semibold">
-        <span class="hidden lg:inline">Angular Authentication</span>
-        <span class="inline lg:hidden">Auth</span>
-      </span>
+    <a routerLink="/market" class="flex items-center gap-4">
+      <span class="text-xs font-bold tracking-[0.3em] text-white">VOLDEMORT</span>
     </a>
+    
+    <div class="h-4 w-[1px] bg-gray-700 mx-6"></div>
+    
+    <nav class="flex gap-8">
+      <a routerLink="/market" routerLinkActive="text-white border-b-2 border-white pb-6 -mb-6" class="text-xs font-bold tracking-widest text-gray-500 hover:text-white transition-colors">MARKET</a>
+      @if (authUser?.role === 'user') {
+        <a routerLink="/portfolios" routerLinkActive="text-white border-b-2 border-white pb-6 -mb-6" class="text-xs font-bold tracking-widest text-gray-500 hover:text-white transition-colors">PORTFOLIOS</a>
+        <a routerLink="/balance" routerLinkActive="text-white border-b-2 border-white pb-6 -mb-6" class="text-xs font-bold tracking-widest text-gray-500 hover:text-white transition-colors">BALANCE</a>
+      }
+      @if (authUser?.role === 'admin') {
+        <a routerLink="/terminal" routerLinkActive="text-white border-b-2 border-white pb-6 -mb-6" class="text-xs font-bold tracking-widest text-gray-500 hover:text-white transition-colors">TERMINAL</a>
+      }
+    </nav>
     <!-- END: Title -->
 
-    <!-- BEGIN: Main menu items -->
-    <div class="menu-items">
-      @for (item of menuItems; track $index) {
-        <a
-          mat-button
-          [routerLink]="item.link"
-          routerLinkActive="active"
-          #rla="routerLinkActive"
-          [color]="'error'"
-          class="mx-1"
-        >
-          <fa-icon [icon]="item.icon" />
-          <span class="ml-2 hidden lg:inline">{{ item.label }}</span>
-        </a>
-      }
-    </div>
-    <!-- END: Main menu items -->
   </div>
 
-  <div class="flex items-center">
+  <div class="flex items-center gap-6">
+    <div class="flex items-center gap-2">
+      <div class="h-2 w-2 rounded-full bg-green-500 shadow-[0_0_8px_rgba(34,197,94,0.6)]"></div>
+      <span class="text-[10px] font-bold tracking-widest text-gray-500 uppercase">SYSTEM LIVE</span>
+    </div>
+
+    <button (click)="toggleTheme()" class="theme-toggle" [attr.aria-label]="isDarkMode ? 'Switch to light theme' : 'Switch to dark theme'">
+      <mat-icon class="scale-75">{{ isDarkMode ? 'light_mode' : 'dark_mode' }}</mat-icon>
+      <span class="label">{{ isDarkMode ? 'LIGHT' : 'DARK' }}</span>
+    </button>
+
     @if (authUser; as user) {
-      <aa-avatar
-        [text]="user.firstName + ' ' + user.lastName"
-        [matMenuTriggerFor]="userMenu"
-        class="cursor-pointer"
-      />
-
-      <mat-menu #userMenu="matMenu">
-        <button mat-menu-item type="button" disabled>
-          {{ user.firstName + ' ' + user.lastName }}
-        </button>
-        <button mat-menu-item type="button" (click)="logout.emit()">
-          <fa-icon class="mr-2" [icon]="'right-from-bracket'" />
-          Sign out
-        </button>
-      </mat-menu>
+      <div class="flex items-center gap-4">
+        <aa-avatar [text]="user.email" />
+        <span class="text-xs font-mono text-gray-400">{{ user.email }}</span>
+        @if (user.role === 'admin') {
+          <span class="text-[10px] font-bold border border-green-900 text-green-500 px-2 py-0.5 rounded tracking-tighter">ADMIN</span>
+        }
+        <button (click)="logout.emit()" class="text-[10px] font-bold tracking-widest text-gray-500 hover:text-white uppercase transition-colors">LOGOUT</button>
+      </div>
     } @else {
-      <a mat-stroked-button routerLink="/auth/login">
-        <fa-icon [icon]="'user'" />
-        <span class="ml-2 hidden lg:inline">Login</span>
-      </a>
+      <a routerLink="/auth/login" class="text-[10px] font-bold tracking-widest text-gray-500 hover:text-white uppercase transition-colors">LOGIN</a>
     }
-
-    <!-- BEGIN: Github link -->
-    <a
-      href="https://github.com/nikosanif/angular-authentication"
-      target="_blank"
-      rel="noopener noreferrer"
-      class="ml-4 text-2xl"
-      [matTooltip]="'Source code'"
-    >
-      <fa-icon [icon]="['fab', 'github']" />
-    </a>
-    <!-- END: Github link -->
   </div>
 </header>

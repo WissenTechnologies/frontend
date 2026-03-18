@@ -1,6 +1,6 @@
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Injectable, inject } from '@angular/core';
-import { Observable, throwError } from 'rxjs';
+import { Observable, map, throwError } from 'rxjs';
 
 import { ConfigService, TokenStorageService } from '../core/services';
 
@@ -32,54 +32,76 @@ export class AuthService {
    * @returns Observable<AccessData>
    */
   login(username: string, password: string): Observable<AccessData> {
-    return this.http.post<AccessData>(`${this.hostUrl}/api/auth/login`, {
-      client_id: this.clientId,
-      client_secret: this.clientSecret,
-      grant_type: 'password',
+    return this.http.post<AccessData>(`${this.hostUrl}/auth/login`, {
       username,
       password,
     });
   }
 
-  /**
-   * Performs a request for logout authenticated user
-   *
-   * @param {('all' | 'allButCurrent' | 'current')} [clients='current']
-   * @returns Observable<void>
-   */
-  logout(clients: 'all' | 'allButCurrent' | 'current' = 'current'): Observable<void> {
-    const params = new HttpParams().append('clients', clients);
-
-    return this.http.get<void>(`${this.hostUrl}/api/auth/logout`, { params });
+  logout(): Observable<void> {
+    return this.http.post<void>(`${this.hostUrl}/auth/logout`, {});
   }
 
-  /**
-   * Asks for a new access token given
-   * the stored refresh token
-   *
-   * @returns {Observable<AccessData>}
-   */
   refreshToken(): Observable<AccessData> {
     const refreshToken = this.tokenStorageService.getRefreshToken();
     if (!refreshToken) {
       return throwError(() => new Error('Refresh token does not exist'));
     }
 
-    return this.http.post<AccessData>(`${this.hostUrl}/api/auth/login`, {
-      client_id: this.clientId,
-      client_secret: this.clientSecret,
-      grant_type: 'refresh_token',
+    return this.http.post<AccessData>(`${this.hostUrl}/auth/refresh-token`, {
       refresh_token: refreshToken,
     });
   }
 
-  /**
-   * Returns authenticated user
-   * based on saved access token
-   *
-   * @returns {Observable<AuthUser>}
-   */
+  register(username: string, email: string, password: string): Observable<any> {
+    return this.http.post<any>(`${this.hostUrl}/auth/register`, {
+      username,
+      email,
+      password,
+    });
+  }
+
+  verifyRegistrationOtp(email: string, otp: string): Observable<AccessData> {
+    return this.http.post<AccessData>(`${this.hostUrl}/auth/verify-registration-otp`, {
+      email,
+      otp
+    });
+  }
+
+  resetPassword(email: string): Observable<void> {
+    return this.http.post<void>(`${this.hostUrl}/auth/send-otp`, {
+      email,
+    });
+  }
+
   getAuthUser(): Observable<AuthUser> {
-    return this.http.get<AuthUser>(`${this.hostUrl}/api/users/me`);
+    return this.http.get<any>(`${this.hostUrl}/auth/me`).pipe(
+      map(raw => {
+        const email = (raw?.email ?? raw?.username ?? '').toString();
+        const username = (raw?.username ?? '').toString();
+        const roleRaw = (raw?.role ?? '').toString();
+
+        const role = roleRaw.toLowerCase() === 'admin' ? 'admin' : 'user';
+
+        const nameSource = username || email;
+        const nameParts = nameSource
+          .replace(/@.*$/, '')
+          .replace(/[._-]+/g, ' ')
+          .trim()
+          .split(' ')
+          .filter(Boolean);
+
+        const firstName = nameParts[0] ?? '';
+        const lastName = nameParts.slice(1).join(' ');
+
+        return {
+          id: Number(raw?.id ?? 0),
+          firstName,
+          lastName,
+          email,
+          role,
+        } satisfies AuthUser;
+      })
+    );
   }
 }

@@ -5,6 +5,7 @@ export enum TokenStatus {
   VALIDATING = 'VALIDATING',
   VALID = 'VALID',
   INVALID = 'INVALID',
+  LOADING = 'LOADING',
 }
 
 export interface AuthStateModel {
